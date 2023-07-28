@@ -20,7 +20,7 @@ func MewStore(db *sql.DB) *Store {
 	return &Store{db: db}
 }
 
-func (s *Store) SaveAPOD(ctx context.Context, apod entity.Apod) error {
+func (s *Store) SaveApod(ctx context.Context, apod entity.Apod) error {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
