@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gh0st3e/NASA_API/internal/clients"
 	"github.com/gh0st3e/NASA_API/internal/config"
 	"github.com/gh0st3e/NASA_API/internal/db"
 	"github.com/gh0st3e/NASA_API/internal/handler"
@@ -27,6 +28,24 @@ func main() {
 	apodStore := store.MewStore(psql)
 	apodService := service.NewService(log, apodStore)
 	apodHandler := handler.NewHandler(log, apodService)
+
+	fileLog, err := config.InitFileLogger()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	nasaClient := clients.NewNasaClient(fileLog, cfg.NasaClientConfig)
+	worker, err := service.NewWorker(fileLog, nasaClient, apodService)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go func() {
+		err := worker.RunWorker()
+		if err != nil {
+			log.Error(err)
+		}
+	}()
 
 	server := gin.New()
 
