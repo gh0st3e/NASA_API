@@ -51,7 +51,7 @@ func main() {
 
 	apodHandler.Mount(server)
 
-	err = server.Run(cfg.Server.Address)
+	err = server.Run(":" + cfg.Server.Port)
 	if err != nil {
 		panic(err)
 	}
