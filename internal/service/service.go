@@ -47,7 +47,7 @@ func (s *Service) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error) {
 	apods, err := s.store.RetrieveAllApods(ctx)
 	if err != nil {
 		s.log.Errorf("[RetrieveAllApods] error while retrieving apods from db: \n%s", err.Error())
-		return nil, fmt.Errorf("error while retrieving apods from db: \n%w", err)
+		return nil, fmt.Errorf("error while retrieving apods from db: %w", err)
 	}
 
 	s.log.Info(apods)
@@ -62,7 +62,7 @@ func (s *Service) RetrieveApodByDate(ctx context.Context, date string) (*entity.
 	apod, err := s.store.RetrieveAPODByDate(ctx, date)
 	if err != nil {
 		s.log.Errorf("[RetireveApodByDate] error while retrieving apod from db: \n%s", err.Error())
-		return nil, fmt.Errorf("error while retrieving apod from db: \n%w", err)
+		return nil, fmt.Errorf("error while retrieving apod from db: %w", err)
 	}
 
 	s.log.Info(apod)

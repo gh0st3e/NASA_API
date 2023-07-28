@@ -38,8 +38,9 @@ type PSQLDatabase struct {
 }
 
 type Server struct {
-	Host string `required:"true" split_word:"true"`
-	Port string `required:"true" split_word:"true"`
+	Host    string `required:"true" split_word:"true"`
+	Port    string `required:"true" split_word:"true"`
+	Address string `required:"false"`
 }
 
 func Init() (Config, error) {
@@ -110,6 +111,8 @@ func initServer() (Server, error) {
 
 	serverConfig.Host = params[ServerHost]
 	serverConfig.Port = params[ServerPort]
+
+	serverConfig.Address = fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
 
 	return serverConfig, nil
 }

@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/gh0st3e/NASA_API/internal/config"
 	"github.com/gh0st3e/NASA_API/internal/db"
+	"github.com/gh0st3e/NASA_API/internal/handler"
 	"github.com/gh0st3e/NASA_API/internal/service"
 	"github.com/gh0st3e/NASA_API/internal/store"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,6 +26,15 @@ func main() {
 
 	apodStore := store.MewStore(psql)
 	apodService := service.NewService(log, apodStore)
-	_ = apodService
+	apodHandler := handler.NewHandler(log, apodService)
+
+	server := gin.New()
+
+	apodHandler.Mount(server)
+
+	err = server.Run(cfg.Server.Address)
+	if err != nil {
+		panic(err)
+	}
 
 }
