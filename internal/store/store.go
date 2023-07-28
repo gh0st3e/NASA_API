@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"github.com/go-faster/errors"
 	"time"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
@@ -59,6 +61,10 @@ func (s *Store) RetrieveAPODByDate(ctx context.Context, date string) (*entity.Ap
 		&apod.Title,
 		&apod.Url,
 		&apod.Image)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return apod, fmt.Errorf("no such apod")
+	}
 
 	return apod, err
 }
