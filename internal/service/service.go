@@ -11,7 +11,7 @@ import (
 
 type StoreActions interface {
 	SaveApod(ctx context.Context, apod entity.Apod) error
-	RetrieveAPODByDate(ctx context.Context, date string) (*entity.Apod, error)
+	RetrieveApodByDate(ctx context.Context, date string) (*entity.Apod, error)
 	RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 }
 
@@ -59,7 +59,7 @@ func (s *Service) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error) {
 func (s *Service) RetrieveApodByDate(ctx context.Context, date string) (*entity.Apod, error) {
 	s.log.Info("[RetireveApodByDate] started")
 
-	apod, err := s.store.RetrieveAPODByDate(ctx, date)
+	apod, err := s.store.RetrieveApodByDate(ctx, date)
 	if err != nil {
 		s.log.Errorf("[RetireveApodByDate] error while retrieving apod from db: \n%s", err.Error())
 		return nil, fmt.Errorf("error while retrieving apod from db: %w", err)

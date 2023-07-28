@@ -1,13 +1,12 @@
 package entity
 
 type Apod struct {
-	ID             int
-	Date           string
-	Explanation    string
-	HdUrl          string
-	MediaType      string
-	ServiceVersion string
-	Title          string
-	Url            string
-	Image          []byte
+	ID             int    `json:"id"`
+	Date           string `json:"date"`
+	Explanation    string `json:"explanation"`
+	HdUrl          string `json:"hdurl"`
+	MediaType      string `json:"media_type"`
+	ServiceVersion string `json:"service_version"`
+	Title          string `json:"title"`
+	Url            string `json:"url"`
 }

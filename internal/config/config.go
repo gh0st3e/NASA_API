@@ -17,11 +17,14 @@ const (
 
 	ServerHost = "SERVER_HOST"
 	ServerPort = "SERVER_PORT"
+
+	NasaApiKey = "NASA_API_KEY"
 )
 
 type Config struct {
-	PSQLDatabase PSQLDatabase
-	Server       Server
+	PSQLDatabase     PSQLDatabase
+	Server           Server
+	NasaClientConfig NasaClientConfig
 }
 
 type PSQLDatabase struct {
@@ -41,6 +44,10 @@ type Server struct {
 	Host    string `required:"true" split_word:"true"`
 	Port    string `required:"true" split_word:"true"`
 	Address string `required:"false"`
+}
+
+type NasaClientConfig struct {
+	ApiKey string `required:"true" split_word:"true"`
 }
 
 func Init() (Config, error) {
@@ -64,6 +71,12 @@ func Init() (Config, error) {
 		return Config{}, err
 	}
 	cfg.Server = serverConfig
+
+	nasaClientConfig, err := initNasaClient()
+	if err != nil {
+		return Config{}, err
+	}
+	cfg.NasaClientConfig = nasaClientConfig
 
 	return cfg, nil
 }
@@ -115,6 +128,23 @@ func initServer() (Server, error) {
 	serverConfig.Address = fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
 
 	return serverConfig, nil
+}
+
+func initNasaClient() (NasaClientConfig, error) {
+	var params = map[string]string{
+		NasaApiKey: "",
+	}
+
+	params, err := LookupEnvs(params)
+	if err != nil {
+		return NasaClientConfig{}, nil
+	}
+
+	var nasaClientConfig = NasaClientConfig{}
+
+	nasaClientConfig.ApiKey = params[NasaApiKey]
+
+	return nasaClientConfig, nil
 }
 
 func LookupEnvs(params map[string]string) (map[string]string, error) {

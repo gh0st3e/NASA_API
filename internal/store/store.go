@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/go-faster/errors"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
@@ -26,8 +26,8 @@ func (s *Store) SaveApod(ctx context.Context, apod entity.Apod) error {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
-	query := `INSERT INTO apod_data(date,explanation,hdurl,media_type,service_version,title,url,image)
-						VALUES($1,$2,$3,$4,$5,$6,$7,$8)`
+	query := `INSERT INTO apod_data(date,explanation,hdurl,media_type,service_version,title,url)
+						VALUES($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err := s.db.ExecContext(ctx, query,
 		apod.Date,
@@ -36,17 +36,16 @@ func (s *Store) SaveApod(ctx context.Context, apod entity.Apod) error {
 		apod.MediaType,
 		apod.ServiceVersion,
 		apod.Title,
-		apod.Url,
-		apod.Image)
+		apod.Url)
 
 	return err
 }
 
-func (s *Store) RetrieveAPODByDate(ctx context.Context, date string) (*entity.Apod, error) {
+func (s *Store) RetrieveApodByDate(ctx context.Context, date string) (*entity.Apod, error) {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
-	query := `SELECT date,explanation,hdurl,media_type,service_version,title,url,image
+	query := `SELECT date,explanation,hdurl,media_type,service_version,title,url
 				FROM apod_data
 				WHERE date=$1`
 
@@ -59,8 +58,7 @@ func (s *Store) RetrieveAPODByDate(ctx context.Context, date string) (*entity.Ap
 		&apod.MediaType,
 		&apod.ServiceVersion,
 		&apod.Title,
-		&apod.Url,
-		&apod.Image)
+		&apod.Url)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return apod, fmt.Errorf("no such apod")
@@ -73,7 +71,7 @@ func (s *Store) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error) {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
-	query := `SELECT date,explanation,hdurl,media_type,service_version,title,url,image
+	query := `SELECT date,explanation,hdurl,media_type,service_version,title,url
 				FROM apod_data`
 
 	rows, err := s.db.QueryContext(ctx, query)
@@ -90,12 +88,10 @@ func (s *Store) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error) {
 			&apod.Date,
 			&apod.Explanation,
 			&apod.HdUrl,
-			&apod.Url,
 			&apod.MediaType,
 			&apod.ServiceVersion,
 			&apod.Title,
-			&apod.Url,
-			&apod.Image)
+			&apod.Url)
 		if err != nil {
 			return nil, err
 		}

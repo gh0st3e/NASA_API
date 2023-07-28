@@ -1,2 +1,4 @@
 .idea
 .env
+app.log
+assets/images
