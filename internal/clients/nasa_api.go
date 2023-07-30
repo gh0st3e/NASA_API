@@ -12,6 +12,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	nasaURL = "https://api.nasa.gov/planetary/apod?api_key=%s"
+)
+
 type NasaClient struct {
 	log    *logrus.Logger
 	apiKey string
@@ -27,13 +31,14 @@ func NewNasaClient(log *logrus.Logger, cfg config.NasaClientConfig) *NasaClient 
 func (n *NasaClient) GetApod() (*entity.Apod, error) {
 	n.log.Info("[GetApod] started")
 
-	url := fmt.Sprintf("https://api.nasa.gov/planetary/apod?api_key=%s", n.apiKey)
+	url := fmt.Sprintf(nasaURL, n.apiKey)
 
 	resp, err := http.Get(url)
 	if err != nil {
 		n.log.Errorf("[GetApod] error while request api.nasa.gov: %s", err.Error())
 		return nil, fmt.Errorf("error while request api.nasa.gov: %w", err)
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

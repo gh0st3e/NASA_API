@@ -1,7 +1,10 @@
 FROM golang:alpine AS builder
 
-ADD . /src
-RUN cd /src && go build -o main cmd/main.go
+WORKDIR /src
+COPY . .
+
+RUN go mod download
+RUN go build -o main cmd/main.go
 
 FROM alpine as runner
 

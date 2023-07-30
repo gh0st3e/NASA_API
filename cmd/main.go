@@ -25,9 +25,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	apodStore := store.MewStore(psql)
-	apodService := service.NewService(log, apodStore)
-	apodHandler := handler.NewHandler(log, apodService)
+	minio, err := db.InitMinio(cfg.MinioConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	apodStore := store.NewApodStore(psql)
+	imageStore := store.NewImageStore(minio, cfg.MinioConfig.BucketName)
+
+	apodService := service.NewApodService(log, apodStore)
+	imageService := service.NewImageService(log, imageStore)
+
+	hdlr := handler.NewHandler(log, apodService, imageService)
 
 	fileLog, err := config.InitFileLogger()
 	if err != nil {
@@ -35,7 +44,7 @@ func main() {
 	}
 
 	nasaClient := clients.NewNasaClient(fileLog, cfg.NasaClientConfig)
-	worker, err := service.NewWorker(fileLog, nasaClient, apodService)
+	worker, err := service.NewWorker(fileLog, nasaClient, apodService, imageService)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,11 +58,10 @@ func main() {
 
 	server := gin.New()
 
-	apodHandler.Mount(server)
+	hdlr.Mount(server)
 
 	err = server.Run(":" + cfg.Server.Port)
 	if err != nil {
 		panic(err)
 	}
-
 }
