@@ -1,4 +1,6 @@
 .idea
 .env
+local.env
 app.log
 assets/images
+data

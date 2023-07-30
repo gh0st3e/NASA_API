@@ -19,12 +19,20 @@ const (
 	ServerPort = "SERVER_PORT"
 
 	NasaApiKey = "NASA_API_KEY"
+
+	MinioHost         = "MINIO_HOST"
+	MinioPort         = "MINIO_PORT"
+	MinioRootUser     = "MINIO_ROOT_USER"
+	MinioRootPassword = "MINIO_ROOT_PASSWORD"
+	MinioBucket       = "MINIO_BUCKET"
+	MinioLocation     = "MINIO_LOCATION"
 )
 
 type Config struct {
 	PSQLDatabase     PSQLDatabase
 	Server           Server
 	NasaClientConfig NasaClientConfig
+	MinioConfig      MinioConfig
 }
 
 type PSQLDatabase struct {
@@ -48,6 +56,16 @@ type Server struct {
 
 type NasaClientConfig struct {
 	ApiKey string `required:"true" split_word:"true"`
+}
+
+type MinioConfig struct {
+	Host       string `required:"true" split_word:"true"`
+	Port       string `required:"true" split_word:"true"`
+	Username   string `required:"true" split_word:"true"`
+	Password   string `required:"true" split_word:"true"`
+	BucketName string `required:"true" split_word:"true"`
+	Location   string `required:"true" split_word:"true"`
+	Address    string `required:"false"`
 }
 
 func Init() (Config, error) {
@@ -77,6 +95,12 @@ func Init() (Config, error) {
 		return Config{}, err
 	}
 	cfg.NasaClientConfig = nasaClientConfig
+
+	minioConfig, err := initMinio()
+	if err != nil {
+		return Config{}, err
+	}
+	cfg.MinioConfig = minioConfig
 
 	return cfg, nil
 }
@@ -145,6 +169,34 @@ func initNasaClient() (NasaClientConfig, error) {
 	nasaClientConfig.ApiKey = params[NasaApiKey]
 
 	return nasaClientConfig, nil
+}
+
+func initMinio() (MinioConfig, error) {
+	var params = map[string]string{
+		MinioHost:         "",
+		MinioPort:         "",
+		MinioRootUser:     "",
+		MinioRootPassword: "",
+		MinioBucket:       "",
+		MinioLocation:     "",
+	}
+
+	params, err := LookupEnvs(params)
+	if err != nil {
+		return MinioConfig{}, err
+	}
+
+	var minioConfig = MinioConfig{}
+
+	minioConfig.Host = params[MinioHost]
+	minioConfig.Port = params[MinioPort]
+	minioConfig.Username = params[MinioRootUser]
+	minioConfig.Password = params[MinioRootPassword]
+	minioConfig.BucketName = params[MinioBucket]
+	minioConfig.Location = params[MinioLocation]
+	minioConfig.Address = fmt.Sprintf("%s:%s", minioConfig.Host, minioConfig.Port)
+
+	return minioConfig, nil
 }
 
 func LookupEnvs(params map[string]string) (map[string]string, error) {

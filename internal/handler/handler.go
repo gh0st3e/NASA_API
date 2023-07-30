@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
 
@@ -11,20 +11,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ServiceActions interface {
+type ApodActions interface {
 	RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 	RetrieveApodByDate(ctx context.Context, date string) (*entity.Apod, error)
 }
 
-type Handler struct {
-	log     *logrus.Logger
-	service ServiceActions
+type ImageActions interface {
+	GetImage(ctx context.Context, fileName string) (string, error)
 }
 
-func NewHandler(log *logrus.Logger, service ServiceActions) *Handler {
+type Handler struct {
+	log          *logrus.Logger
+	apodService  ApodActions
+	imageService ImageActions
+}
+
+func NewHandler(log *logrus.Logger, apodService ApodActions, imageService ImageActions) *Handler {
 	return &Handler{
-		log:     log,
-		service: service,
+		log:          log,
+		apodService:  apodService,
+		imageService: imageService,
 	}
 }
 
@@ -41,7 +47,7 @@ func (h *Handler) Mount(r *gin.Engine) {
 }
 
 func (h *Handler) RetrieveAllApods(ctx *gin.Context) {
-	apods, err := h.service.RetrieveAllApods(ctx)
+	apods, err := h.apodService.RetrieveAllApods(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -55,13 +61,27 @@ func (h *Handler) RetrieveAllApods(ctx *gin.Context) {
 func (h *Handler) RetrieveApodImageByDate(ctx *gin.Context) {
 	date := ctx.Query("date")
 
-	ctx.File(fmt.Sprintf("assets/images/%s.jpg", date))
+	filePath, err := h.imageService.GetImage(ctx, date)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.File(filePath)
+
+	err = os.Remove(filePath)
+	if err != nil {
+		h.log.Errorf("Error while deleting image: %s", err.Error())
+		return
+	}
 }
 
 func (h *Handler) RetrieveApodByDate(ctx *gin.Context) {
 	date := ctx.Query("date")
 
-	apod, err := h.service.RetrieveApodByDate(ctx, date)
+	apod, err := h.apodService.RetrieveApodByDate(ctx, date)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

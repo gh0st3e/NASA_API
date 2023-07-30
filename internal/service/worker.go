@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
@@ -26,17 +27,22 @@ type ClientActions interface {
 	GetApod() (*entity.Apod, error)
 }
 
-type Saver interface {
+type ApodSaver interface {
 	SaveApod(ctx context.Context, apod entity.Apod) error
+}
+
+type ImageSaver interface {
+	PutImage(ctx context.Context, objectName, filePath, contentType string) error
 }
 
 type Worker struct {
 	log        *logrus.Logger
 	nasaClient ClientActions
-	saver      Saver
+	apodSaver  ApodSaver
+	imageSaver ImageSaver
 }
 
-func NewWorker(log *logrus.Logger, nasaClient ClientActions, saver Saver) (*Worker, error) {
+func NewWorker(log *logrus.Logger, nasaClient ClientActions, apodSaver ApodSaver, imageSaver ImageSaver) (*Worker, error) {
 	err := os.MkdirAll(imagesPath, dirPermission)
 	if err != nil {
 		if !errors.Is(err, os.ErrExist) {
@@ -47,7 +53,8 @@ func NewWorker(log *logrus.Logger, nasaClient ClientActions, saver Saver) (*Work
 	return &Worker{
 		log:        log,
 		nasaClient: nasaClient,
-		saver:      saver,
+		apodSaver:  apodSaver,
+		imageSaver: imageSaver,
 	}, nil
 }
 
@@ -73,13 +80,14 @@ func (w *Worker) GetApod() {
 		return
 	}
 
-	img, err := http.Get(apod.Url)
+	imgResponse, err := http.Get(apod.Url)
 	if err != nil {
 		w.log.Errorf("error while request img url: %s", err.Error())
 		return
 	}
+	defer imgResponse.Body.Close()
 
-	body, err := io.ReadAll(img.Body)
+	body, err := io.ReadAll(imgResponse.Body)
 	if err != nil {
 		w.log.Errorf("error while reading response: %s", err.Error())
 		return
@@ -90,8 +98,25 @@ func (w *Worker) GetApod() {
 		w.log.Errorf("error while writing file: %s", err.Error())
 		return
 	}
+	defer func() {
+		err := os.Remove(fmt.Sprintf("%s/%s%s", imagesPath, apod.Date, fileExtension))
+		if err != nil {
+			w.log.Errorf("error while deleting image")
+		}
+	}()
 
-	err = w.saver.SaveApod(context.Background(), *apod)
+	objectName := apod.Date + fileExtension
+	filePath := filepath.Join(imagesPath, objectName)
+	contentType := "image/jpg"
+	ctx := context.Background()
+
+	err = w.imageSaver.PutImage(ctx, objectName, filePath, contentType)
+	if err != nil {
+		w.log.Error(err)
+		return
+	}
+
+	err = w.apodSaver.SaveApod(context.Background(), *apod)
 	if err != nil {
 		w.log.Error(err)
 		return
