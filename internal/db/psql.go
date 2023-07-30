@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func InitPSQL(cfg config.PSQLDatabase) (*sql.DB, error) {
+func InitPSQL(cfg *config.PSQLDatabase) (*sql.DB, error) {
 	db, err := sql.Open(cfg.Driver, cfg.Address)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't open PSQL: %s", err)

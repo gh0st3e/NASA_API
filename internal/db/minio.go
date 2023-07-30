@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func InitMinio(cfg config.MinioConfig) (*minio.Client, error) {
+func InitMinio(cfg *config.MinioConfig) (*minio.Client, error) {
 	ctx := context.Background()
 
 	endpoint := cfg.Address

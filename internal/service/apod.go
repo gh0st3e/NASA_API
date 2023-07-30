@@ -10,7 +10,7 @@ import (
 )
 
 type ApodActions interface {
-	SaveApod(ctx context.Context, apod entity.Apod) error
+	SaveApod(ctx context.Context, apod *entity.Apod) error
 	RetrieveApodByDate(ctx context.Context, date string) (*entity.Apod, error)
 	RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 }
@@ -27,7 +27,7 @@ func NewApodService(log *logrus.Logger, apodStore ApodActions) *ApodService {
 	}
 }
 
-func (a *ApodService) SaveApod(ctx context.Context, apod entity.Apod) error {
+func (a *ApodService) SaveApod(ctx context.Context, apod *entity.Apod) error {
 	a.log.Info("[SaveApod] started")
 
 	err := a.apodStore.SaveApod(ctx, apod)

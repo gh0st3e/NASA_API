@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/pkg/errors"
 	"time"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -22,7 +23,7 @@ func NewApodStore(db *sql.DB) *ApodStore {
 	return &ApodStore{db: db}
 }
 
-func (a *ApodStore) SaveApod(ctx context.Context, apod entity.Apod) error {
+func (a *ApodStore) SaveApod(ctx context.Context, apod *entity.Apod) error {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
