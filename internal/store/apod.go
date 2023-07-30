@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/pkg/errors"
 	"time"
 
 	"github.com/gh0st3e/NASA_API/internal/entity"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -22,7 +23,7 @@ func NewApodStore(db *sql.DB) *ApodStore {
 	return &ApodStore{db: db}
 }
 
-func (a *ApodStore) SaveApod(ctx context.Context, apod entity.Apod) error {
+func (a *ApodStore) SaveApod(ctx context.Context, apod *entity.Apod) error {
 	ctx, cancel := context.WithTimeout(ctx, CtxTimeout)
 	defer cancel()
 
@@ -32,11 +33,11 @@ func (a *ApodStore) SaveApod(ctx context.Context, apod entity.Apod) error {
 	_, err := a.db.ExecContext(ctx, query,
 		apod.Date,
 		apod.Explanation,
-		apod.HdUrl,
+		apod.HdURL,
 		apod.MediaType,
 		apod.ServiceVersion,
 		apod.Title,
-		apod.Url)
+		apod.URL)
 
 	return err
 }
@@ -54,11 +55,11 @@ func (a *ApodStore) RetrieveApodByDate(ctx context.Context, date string) (*entit
 	err := a.db.QueryRowContext(ctx, query, date).Scan(
 		&apod.Date,
 		&apod.Explanation,
-		&apod.HdUrl,
+		&apod.HdURL,
 		&apod.MediaType,
 		&apod.ServiceVersion,
 		&apod.Title,
-		&apod.Url)
+		&apod.URL)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return apod, fmt.Errorf("no such apod")
@@ -78,6 +79,7 @@ func (a *ApodStore) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var apods []entity.Apod
 
@@ -87,11 +89,11 @@ func (a *ApodStore) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 		err := rows.Scan(
 			&apod.Date,
 			&apod.Explanation,
-			&apod.HdUrl,
+			&apod.HdURL,
 			&apod.MediaType,
 			&apod.ServiceVersion,
 			&apod.Title,
-			&apod.Url)
+			&apod.URL)
 		if err != nil {
 			return nil, err
 		}

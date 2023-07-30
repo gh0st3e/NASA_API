@@ -8,11 +8,11 @@ import (
 	"github.com/gh0st3e/NASA_API/internal/config"
 
 	_ "github.com/lib/pq"
-	"github.com/pressly/goose/v3"
+	goose "github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"
 )
 
-func InitPSQL(cfg config.PSQLDatabase) (*sql.DB, error) {
+func InitPSQL(cfg *config.PSQLDatabase) (*sql.DB, error) {
 	db, err := sql.Open(cfg.Driver, cfg.Address)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't open PSQL: %s", err)

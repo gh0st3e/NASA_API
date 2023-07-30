@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/minio/minio-go/v7"
+	minio "github.com/minio/minio-go/v7"
 )
 
 type ImageStore struct {

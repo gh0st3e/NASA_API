@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"io"
 	"net/http"
 	"os"
@@ -13,13 +12,14 @@ import (
 	"github.com/gh0st3e/NASA_API/internal/entity"
 
 	"github.com/go-co-op/gocron"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	dirPermission  = 0777
+	dirPermission  = 0o777
 	imagesPath     = "assets/images"
-	filePermission = 0644
+	filePermission = 0o644
 	fileExtension  = ".jpg"
 )
 
@@ -28,7 +28,7 @@ type ClientActions interface {
 }
 
 type ApodSaver interface {
-	SaveApod(ctx context.Context, apod entity.Apod) error
+	SaveApod(ctx context.Context, apod *entity.Apod) error
 }
 
 type ImageSaver interface {
@@ -76,11 +76,11 @@ func (w *Worker) RunWorker() error {
 func (w *Worker) GetApod() {
 	apod, err := w.nasaClient.GetApod()
 	if err != nil {
-		w.log.Error("error from client: %s", err.Error())
+		w.log.Errorf("error from client: %s", err.Error())
 		return
 	}
 
-	imgResponse, err := http.Get(apod.Url)
+	imgResponse, err := http.Get(apod.URL)
 	if err != nil {
 		w.log.Errorf("error while request img url: %s", err.Error())
 		return
@@ -116,7 +116,7 @@ func (w *Worker) GetApod() {
 		return
 	}
 
-	err = w.apodSaver.SaveApod(context.Background(), *apod)
+	err = w.apodSaver.SaveApod(context.Background(), apod)
 	if err != nil {
 		w.log.Error(err)
 		return
