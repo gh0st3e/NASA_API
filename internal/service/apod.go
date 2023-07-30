@@ -32,7 +32,7 @@ func (a *ApodService) SaveApod(ctx context.Context, apod *entity.Apod) error {
 
 	err := a.apodStore.SaveApod(ctx, apod)
 	if err != nil {
-		a.log.Errorf("[SaveApod] error while save apod to db: \n%a", err.Error())
+		a.log.Errorf("[SaveApod] error while save apod to db: \n%s", err.Error())
 		return fmt.Errorf("error while save apod to db: \n%w", err)
 	}
 
@@ -46,7 +46,7 @@ func (a *ApodService) RetrieveAllApods(ctx context.Context) ([]entity.Apod, erro
 
 	apods, err := a.apodStore.RetrieveAllApods(ctx)
 	if err != nil {
-		a.log.Errorf("[RetrieveAllApods] error while retrieving apods from db: \n%a", err.Error())
+		a.log.Errorf("[RetrieveAllApods] error while retrieving apods from db: \n%s", err.Error())
 		return nil, fmt.Errorf("error while retrieving apods from db: %w", err)
 	}
 
@@ -61,7 +61,7 @@ func (a *ApodService) RetrieveApodByDate(ctx context.Context, date string) (*ent
 
 	apod, err := a.apodStore.RetrieveApodByDate(ctx, date)
 	if err != nil {
-		a.log.Errorf("[RetireveApodByDate] error while retrieving apod from db: \n%a", err.Error())
+		a.log.Errorf("[RetireveApodByDate] error while retrieving apod from db: \n%s", err.Error())
 		return nil, fmt.Errorf("error while retrieving apod from db: %w", err)
 	}
 

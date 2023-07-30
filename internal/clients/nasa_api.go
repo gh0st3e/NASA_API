@@ -24,7 +24,7 @@ type NasaClient struct {
 func NewNasaClient(log *logrus.Logger, cfg config.NasaClientConfig) *NasaClient {
 	return &NasaClient{
 		log:    log,
-		apiKey: cfg.ApiKey,
+		apiKey: cfg.APIKey,
 	}
 }
 

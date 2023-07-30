@@ -76,7 +76,7 @@ func (w *Worker) RunWorker() error {
 func (w *Worker) GetApod() {
 	apod, err := w.nasaClient.GetApod()
 	if err != nil {
-		w.log.Error("error from client: %s", err.Error())
+		w.log.Errorf("error from client: %s", err.Error())
 		return
 	}
 

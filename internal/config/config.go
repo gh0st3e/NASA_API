@@ -18,7 +18,7 @@ const (
 	ServerHost = "SERVER_HOST"
 	ServerPort = "SERVER_PORT"
 
-	NasaApiKey = "NASA_API_KEY"
+	NasaAPIKey = "NASA_API_KEY"
 
 	MinioHost         = "MINIO_HOST"
 	MinioPort         = "MINIO_PORT"
@@ -55,7 +55,7 @@ type Server struct {
 }
 
 type NasaClientConfig struct {
-	ApiKey string `required:"true" split_word:"true"`
+	APIKey string `required:"true" split_word:"true"`
 }
 
 type MinioConfig struct {
@@ -156,7 +156,7 @@ func initServer() (Server, error) {
 
 func initNasaClient() (NasaClientConfig, error) {
 	var params = map[string]string{
-		NasaApiKey: "",
+		NasaAPIKey: "",
 	}
 
 	params, err := LookupEnvs(params)
@@ -166,7 +166,7 @@ func initNasaClient() (NasaClientConfig, error) {
 
 	var nasaClientConfig = NasaClientConfig{}
 
-	nasaClientConfig.ApiKey = params[NasaApiKey]
+	nasaClientConfig.APIKey = params[NasaAPIKey]
 
 	return nasaClientConfig, nil
 }

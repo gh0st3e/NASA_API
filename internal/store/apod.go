@@ -79,6 +79,7 @@ func (a *ApodStore) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var apods []entity.Apod
 
