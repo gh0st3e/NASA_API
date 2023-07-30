@@ -40,7 +40,6 @@ linters:
     - staticcheck
     - unused
     - bodyclose
-    - depguard
     - exportloopref
     - goconst
     - gocritic

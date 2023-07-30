@@ -33,11 +33,11 @@ func (a *ApodStore) SaveApod(ctx context.Context, apod *entity.Apod) error {
 	_, err := a.db.ExecContext(ctx, query,
 		apod.Date,
 		apod.Explanation,
-		apod.HdUrl,
+		apod.HdURL,
 		apod.MediaType,
 		apod.ServiceVersion,
 		apod.Title,
-		apod.Url)
+		apod.URL)
 
 	return err
 }
@@ -55,11 +55,11 @@ func (a *ApodStore) RetrieveApodByDate(ctx context.Context, date string) (*entit
 	err := a.db.QueryRowContext(ctx, query, date).Scan(
 		&apod.Date,
 		&apod.Explanation,
-		&apod.HdUrl,
+		&apod.HdURL,
 		&apod.MediaType,
 		&apod.ServiceVersion,
 		&apod.Title,
-		&apod.Url)
+		&apod.URL)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return apod, fmt.Errorf("no such apod")
@@ -88,11 +88,11 @@ func (a *ApodStore) RetrieveAllApods(ctx context.Context) ([]entity.Apod, error)
 		err := rows.Scan(
 			&apod.Date,
 			&apod.Explanation,
-			&apod.HdUrl,
+			&apod.HdURL,
 			&apod.MediaType,
 			&apod.ServiceVersion,
 			&apod.Title,
-			&apod.Url)
+			&apod.URL)
 		if err != nil {
 			return nil, err
 		}

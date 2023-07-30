@@ -80,7 +80,7 @@ func (w *Worker) GetApod() {
 		return
 	}
 
-	imgResponse, err := http.Get(apod.Url)
+	imgResponse, err := http.Get(apod.URL)
 	if err != nil {
 		w.log.Errorf("error while request img url: %s", err.Error())
 		return

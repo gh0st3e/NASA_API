@@ -27,12 +27,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	psql, err := db.InitPSQL(cfg.PSQLDatabase)
+	psql, err := db.InitPSQL(&cfg.PSQLDatabase)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	minio, err := db.InitMinio(cfg.MinioConfig)
+	minio, err := db.InitMinio(&cfg.MinioConfig)
 	if err != nil {
 		log.Fatal(err)
 	}

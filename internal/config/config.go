@@ -141,7 +141,7 @@ func initServer() (Server, error) {
 
 	params, err := LookupEnvs(params)
 	if err != nil {
-		return Server{}, nil
+		return Server{}, err
 	}
 
 	var serverConfig = Server{}
@@ -161,7 +161,7 @@ func initNasaClient() (NasaClientConfig, error) {
 
 	params, err := LookupEnvs(params)
 	if err != nil {
-		return NasaClientConfig{}, nil
+		return NasaClientConfig{}, err
 	}
 
 	var nasaClientConfig = NasaClientConfig{}
