@@ -12,6 +12,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @title NASA_API
+// @version 1.0
+// @description app provide API to get APOD from NASA
+
+// @host localhost:8090
+// @BasePath /api
+
 func main() {
 	log := logrus.New()
 
