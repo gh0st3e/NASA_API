@@ -1,0 +1,84 @@
+basePath: /api
+definitions:
+  entity.Apod:
+    properties:
+      date:
+        type: string
+      explanation:
+        type: string
+      hdurl:
+        type: string
+      id:
+        type: integer
+      media_type:
+        type: string
+      service_version:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:8090
+info:
+  contact: {}
+  description: app provide API to get APOD from NASA
+  title: NASA_API
+  version: "1.0"
+paths:
+  /apod:
+    get:
+      description: Retrieves the Astronomy Picture of the Day for a specific date.
+      parameters:
+      - description: Date for the APOD in the format YYYY-MM-DD
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Apod'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get APOD by date
+  /apods:
+    get:
+      description: Retrieves all Astronomy Picture of the Day.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Apod'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all APODs
+  /img/apod:
+    get:
+      description: Retrieves the image for the Astronomy Picture of the Day for a
+        specific date.
+      parameters:
+      - description: Date for the APOD image in the format YYYY-MM-DD
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get APOD image by date
+swagger: "2.0"

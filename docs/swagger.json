@@ -1,0 +1,125 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "app provide API to get APOD from NASA",
+        "title": "NASA_API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8090",
+    "basePath": "/api",
+    "paths": {
+        "/apod": {
+            "get": {
+                "description": "Retrieves the Astronomy Picture of the Day for a specific date.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get APOD by date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date for the APOD in the format YYYY-MM-DD",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Apod"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/apods": {
+            "get": {
+                "description": "Retrieves all Astronomy Picture of the Day.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get all APODs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Apod"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/img/apod": {
+            "get": {
+                "description": "Retrieves the image for the Astronomy Picture of the Day for a specific date.",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "summary": "Get APOD image by date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date for the APOD image in the format YYYY-MM-DD",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.Apod": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "explanation": {
+                    "type": "string"
+                },
+                "hdurl": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "media_type": {
+                    "type": "string"
+                },
+                "service_version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
