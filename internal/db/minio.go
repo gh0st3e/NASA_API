@@ -6,7 +6,7 @@ import (
 
 	"github.com/gh0st3e/NASA_API/internal/config"
 
-	"github.com/minio/minio-go/v7"
+	minio "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/sirupsen/logrus"
 )
